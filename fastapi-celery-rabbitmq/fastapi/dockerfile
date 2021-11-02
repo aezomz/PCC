@@ -1,0 +1,16 @@
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9-slim
+
+ENV HOME /app
+WORKDIR /app
+
+COPY ./app/* ${HOME}
+
+RUN pip3 install -r ${HOME}/requirements.txt
+
+RUN groupadd --system lotso --gid=1314 && \
+    useradd --system -g lotso --uid=1314 -d ${HOME} lotso && \
+    chown lotso:lotso -R ${HOME}
+USER lotso
+
+# ENTRYPOINT "/app/start.sh"
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8083", "--reload"]

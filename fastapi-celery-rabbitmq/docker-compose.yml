@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+    rabbitmq:
+        hostname: rabbitmq
+        image: rabbitmq:3.9.8-alpine
+        container_name: fastapi-rabbitmq
+        restart: always
+        ports:
+            - "4369:4369" 
+            - "5671:5671" 
+            - "5672:5672"
+        networks:
+            - fcr-network            
+    fastapi:
+        image: fastapi-celery-flower
+        # build: fastapi
+        environment:
+            - RABBITMQ_HOST=rabbitmq         
+        ports:
+            - "8083:8083"
+        networks:
+            - fcr-network
+    flower:
+        image: fastapi-celery-flower
+        # build: fastapi
+        environment:
+            - RABBITMQ_HOST=rabbitmq    
+        depends_on:
+            - rabbitmq
+        ports:
+            - "5555:5555"            
+        networks:
+            - fcr-network
+        command: celery -A celery_worker.celery flower --broker:amqp://guest:guest@rabbitmq:5672//
+    celery-worker-1:
+        image: fastapi-celery-flower
+        # build: fastapi
+        environment:
+            - RABBITMQ_HOST=rabbitmq
+        volumes:
+            - "./fastapi/app/:/app/"
+        depends_on:
+            - rabbitmq
+        networks:
+            - fcr-network
+        command: celery -A celery_worker.celery worker --loglevel=info
+        
+networks:
+    fcr-network:
