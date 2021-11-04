@@ -1,0 +1,15 @@
+kind: Service 
+apiVersion: v1 
+metadata:
+  name: flower
+  labels:
+    app: fcr
+    type: flower-service
+spec:
+  type: NodePort
+  selector:
+    app: fcr
+    type: flower-pod
+  ports:
+    - port: 5555 
+      targetPort: 5555

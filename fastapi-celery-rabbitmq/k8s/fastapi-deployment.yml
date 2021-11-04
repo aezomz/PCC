@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+  labels:
+    app: fcr
+    type: deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fcr
+      type: api-pod
+  template:
+    metadata:
+      labels:
+        app: fcr
+        type: api-pod
+    spec:
+      containers:
+        - name: fastapi
+          image: fastapi-celery-flower
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8083
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"                    

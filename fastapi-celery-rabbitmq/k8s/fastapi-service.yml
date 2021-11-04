@@ -1,0 +1,15 @@
+kind: Service 
+apiVersion: v1 
+metadata:
+  name: fastapi
+  labels:
+    app: fcr
+    type: api-service
+spec:
+  type: NodePort
+  selector:
+    app: fcr
+    type: api-pod
+  ports:
+    - port: 8083 
+      targetPort: 8083
